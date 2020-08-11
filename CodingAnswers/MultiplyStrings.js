@@ -1,31 +1,41 @@
-const multiply = function(num1, num2) {
 
-    let result = Array(num1.length + num2.length).fill(0);
 
-    for (let i = num1.length - 1; i >= 0; i--) {
+const test = function(num1, num2) {
+
+    let res = new Array(num1.length + num2.length).fill(0)
+    // using long multiplication on strings
+    // start at end of number or string.length - 1
+    for (let i = num2.length - 1; i >= 0; i--) {
+        // current item in res we are on
+        let k = num1.length + i
+        // res overflow for this multiplication
         let overflow = 0
-        // start at end of array
-        let k = num2.length + i
-        // iterate through other number, from end to start
-        for (let j = num2.length - 1; j >= 0; j--) {
-            // product is the curr number * number in the other number + overflow from previous result + the current result
-            // this is due to the result being updated with each multiplication
-            let product = num1[i] * num2[j] + overflow + result[k]
-            // result is value from 0 - 9  so 16 would be 6 remainder 1
-            result[k] = product % 10
-            // overflow is current value - result / 10 so 16 - 6 / 10 = 1
-            overflow = (product - result[k]) / 10
-            k --
+        for (let j = num1.length - 1; j >= 0; j--) {
+            // total - res[k] might of been filled from the previous result thats why we add it
+            let current_total = ((num2[i] * num1[j]) + overflow + res[k])
+            // remainder of total - what we will add to the result (16 mod 10 -> 6)
+            let result = current_total % 10
+            res[k] = result
+            // overflow is essentially carrying the "1" forward
+            overflow = (current_total - result) / 10
+            // move to next item
+            k--
         }
-        result[k] += overflow
+        res[k] += overflow
     }
-
-    return result.join('').replace(/^0+(.)/, '$1');
-
-
+    // check for leading 0's or if the result is just 0's
+    for (let i = 0; i < res.length; i++) {
+        if (res[i] > 0) {
+            res = res.slice(i, res.length)
+            break
+        }
+        if (i === res.length -1 && res[i] === 0) {
+            res = ["0"]
+        }
+    }
+    return res.join('') === "00" ? "0" : res.join('')
 
 }
 
-
-let x = multiply("321", "23")
+let x = test("9133", "0")
 console.log(x)
